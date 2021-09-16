@@ -48,8 +48,8 @@ def getFollowing(driver):
     return liste
 
 def login(driver):
-    user = "......"
-    userpassword = "......"
+    user = ""
+    userpassword = ""
     driver.get("https://www.instagram.com/")
     time.sleep(2)
     name = driver.find_element_by_name("username")
@@ -68,7 +68,7 @@ def unfolloowers(followers,following):
     for i in following:
         if not i in followers:
             haric.append(i)
-            print(i)
+            # print(i)
     return haric
 
 def save(followers,following,vs,chl):
@@ -77,14 +77,14 @@ def save(followers,following,vs,chl):
     vss = pd.DataFrame({"Names": vs})
     chll = pd.DataFrame({"Names": chl})
     income_sheets = {'followers': wers, 'following': wing,'not':vss,'chance':chll}
-    writer = pd.ExcelWriter('./inst.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('./inst.xlsx')
 
     for sheet_name in income_sheets.keys():
         income_sheets[sheet_name].to_excel(writer, sheet_name=sheet_name, index=False)
 
     writer.save()
 
-def save(followers,following,vs):   #first run
+def save1(followers,following,vs):   #first run
     wers = pd.DataFrame({'Names': followers})
     wing= pd.DataFrame({"Names":following})
     vss = pd.DataFrame({"Names": vs})
@@ -99,25 +99,43 @@ def save(followers,following,vs):   #first run
 
 def readOldData():
     getFoll = pd.read_excel('./inst.xlsx', sheet_name='followers')
-    a = getFoll.head()
-    b = a["Names"].to_list()
-    return b
+    s=[]
+    for m in getFoll["Names"]:
+        s.append(m)
+    print(type(s))
+    # a = getFoll.head()
+    # b = a["Names"].to_list()
+    # print(b)
+    # print("b")
+    return s
 
 def chance(followers):
     today = pd.to_datetime("today")
     chlist=[]
     old = readOldData()
+    print(type(old))
     if old!=0:
         gete = pd.read_excel('./inst.xlsx', sheet_name='chance')
         if len(gete)!=0:
-            for j in get:
+            print(gete)
+            for j in gete:
                 chlist.append(j)
 
-        for i in old:
-            if i not in followers:
+        for i in followers:
+            if i not in old:
                 dict = {"name": i,
-                        "time": today}
+                        "status":"New",
+                       "time": today}
                 chlist.append(dict)
+                print(dict)
+        print("----------------")
+        # for i in old:
+        #     if i not in followers:
+        #         dict = {"name": i,
+        #                 "status": "Missing",
+        #                "time": today}
+        #         chlist.append(dict)
+        #         print(dict)
         return chlist
 
 driver = webdriver.Chrome()
@@ -135,14 +153,14 @@ print(len(vs))
 if os.path.isfile('./inst.xlsx'):
 
     chl=chance(followers)
-
+    print(len(chl))
     if len(chl)==0:
-        save(followers, following, vs)
+        save1(followers, following, vs)
     else:
         save(followers, following, vs, chl)
 
 else:
-    save(followers, following, vs)
+    save1(followers, following, vs)
 
 
 
