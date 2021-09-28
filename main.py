@@ -102,7 +102,7 @@ def readOldData():
     s=[]
     for m in getFoll["Names"]:
         s.append(m)
-    print(type(s))
+    #print(type(s))
     # a = getFoll.head()
     # b = a["Names"].to_list()
     # print(b)
@@ -113,13 +113,15 @@ def chance(followers):
     today = pd.to_datetime("today")
     chlist=[]
     old = readOldData()
-    print(type(old))
+    #print(type(old))
     if old!=0:
         gete = pd.read_excel('./inst.xlsx', sheet_name='chance')
         if len(gete)!=0:
-            print(gete)
-            for j in gete:
+            n = 0
+            while len(gete) > n:
+                j = gete["Names"][0]
                 chlist.append(j)
+                n = n + 1
 
         for i in followers:
             if i not in old:
@@ -127,7 +129,7 @@ def chance(followers):
                         "status":"New",
                        "time": today}
                 chlist.append(dict)
-                print(dict)
+                #print(dict)
         print("----------------")
         # for i in old:
         #     if i not in followers:
